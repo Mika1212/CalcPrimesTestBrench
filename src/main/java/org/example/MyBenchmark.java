@@ -39,12 +39,17 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Thread)
 public class MyBenchmark {
 
+    @Param({"100", "1000", "10000",
+          "100000", "1000000", "10000000",
+           "100000000"})
+    public int limit;
+
     //Сложность O(N*log(log(N)))
     //Память O(N)
     // N - общее количество чисел в заданном диапазоне,
     @Benchmark
-    static public int eratosthenes() {
-        int limit = 100;
+    public int eratosthenes() {
+        if (limit < 1) return 0;
         int limit1 = limit + 1;
         int answers = 0;
         boolean[] massive = new boolean[limit1];
@@ -70,8 +75,8 @@ public class MyBenchmark {
     //Память O(N*2)
     // N - общее количество чисел в заданном диапазоне,
     @Benchmark
-    static public int euler() {
-        int limit = 10000000;
+    public int euler() {
+        if (limit < 1) return 0;
         int limit1 = limit + 1;
         int[] pr = new int[limit1];
         int currentIndex = 0;
@@ -97,20 +102,18 @@ public class MyBenchmark {
     }
 
     @Benchmark
-    public static int[] testInt() {
-        int n = 100000;
-        int[] a = new int[n];
-        for (int i = 0; i < n; i++) {
+    public int[] testInt() {
+        int[] a = new int[limit];
+        for (int i = 0; i < limit; i++) {
             a[i] = 1;
         }
         return a;
     }
 
     @Benchmark
-    public static boolean[] testBool() {
-        int n = 100000;
-        boolean[] a = new boolean[n];
-        for (int i = 0; i < n; i++) {
+    public boolean[] testBool() {
+        boolean[] a = new boolean[limit];
+        for (int i = 0; i < limit; i++) {
             a[i] = true;
         }
         return a;
