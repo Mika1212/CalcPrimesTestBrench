@@ -31,18 +31,46 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @State(Scope.Thread)
-public class Euler {
+public class MyBenchmark {
+
+    //Сложность O(N*log(log(N)))
+    //Память O(N)
+    // N - общее количество чисел в заданном диапазоне,
+    @Benchmark
+    static public int eratosthenes() {
+        int limit = 100;
+        int limit1 = limit + 1;
+        int answers = 0;
+        boolean[] massive = new boolean[limit1];
+        Arrays.fill(massive, true);
+        massive[0] = false;
+
+        for (int i = 2; Math.pow(i, 2.0) < limit1; i++) {
+            if (massive[i]) {
+                for (int j = (int) Math.pow(i, 2.0); j < limit1; j += i) {
+                    massive[j] = false;
+                }
+            }
+        }
+
+        for (boolean b : massive) {
+            if (b) answers++;
+        }
+
+        return answers;
+    }
 
     //Сложность O(N)
     //Память O(N*2)
     // N - общее количество чисел в заданном диапазоне,
     @Benchmark
-    static public int calcPrimesNumberOfEuler() {
+    static public int euler() {
         int limit = 10000000;
         int limit1 = limit + 1;
         int[] pr = new int[limit1];
@@ -68,9 +96,29 @@ public class Euler {
         return currentIndex;
     }
 
+    @Benchmark
+    public static int[] testInt() {
+        int n = 100000;
+        int[] a = new int[n];
+        for (int i = 0; i < n; i++) {
+            a[i] = 1;
+        }
+        return a;
+    }
+
+    @Benchmark
+    public static boolean[] testBool() {
+        int n = 100000;
+        boolean[] a = new boolean[n];
+        for (int i = 0; i < n; i++) {
+            a[i] = true;
+        }
+        return a;
+    }
+
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(Euler.class.getSimpleName())
+                .include(MyBenchmark.class.getSimpleName())
                 .forks(1)
                 .build();
 
