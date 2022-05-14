@@ -1,6 +1,6 @@
 # CalcPrimesTestBrench
 
-A simple bencmark to test 2 sieve methods:
+A simple bencmark to test 2 sieve methods:\n
 Sieve of Eratosthenes
 Sieve of Euler
 
