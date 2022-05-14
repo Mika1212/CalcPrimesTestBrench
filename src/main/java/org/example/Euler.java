@@ -25,17 +25,25 @@
 
 package org.example;
 
+import org.openjdk.jmh.runner.RunnerException;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.annotations.*;
-import java.util.Arrays;
+import org.openjdk.jmh.runner.Runner;
+
 import java.util.concurrent.TimeUnit;
 
-public class MyBenchmark {
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.MICROSECONDS)
+@State(Scope.Thread)
+public class Euler {
 
     //Сложность O(N)
     //Память O(N*2)
     // N - общее количество чисел в заданном диапазоне,
-    static public int calcPrimesNumberOfEuler(int limit) {
-        if (limit < 1) return 0;
+    @Benchmark
+    static public int calcPrimesNumberOfEuler() {
+        int limit = 10000000;
         int limit1 = limit + 1;
         int[] pr = new int[limit1];
         int currentIndex = 0;
@@ -47,7 +55,7 @@ public class MyBenchmark {
                 pr[currentIndex] = i;
                 currentIndex++;
             }
-            for (int p: pr){
+            for (int p : pr) {
                 if (p <= lp[i] && p * i <= limit && p != 0) {
                     lp[p * i] = p;
                 } else {
@@ -60,59 +68,12 @@ public class MyBenchmark {
         return currentIndex;
     }
 
-    //Сложность O(N*log(log(N)))
-    //Память O(N)
-    static public int calcPrimesNumberOfEratosthenes(int limit) {
-        if (limit < 1) return 0;
-        int limit1 = limit + 1;
-        int answers = 0;
-        boolean[] massive = new boolean[limit1];
-        Arrays.fill(massive, true);
-        massive[0] = false;
+    public static void main(String[] args) throws RunnerException {
+        Options opt = new OptionsBuilder()
+                .include(Euler.class.getSimpleName())
+                .forks(1)
+                .build();
 
-        for (int i = 2; Math.pow(i, 2.0) < limit1; i++) {
-            if (massive[i]) {
-                for (int j = (int) Math.pow(i, 2.0); j < limit1; j += i) {
-                    massive[j] = false;
-                }
-            }
-        }
-
-        for (boolean b : massive) {
-            if (b) answers++;
-        }
-
-        return answers;
-    }
-
-    @Benchmark @Fork(1) @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.MICROSECONDS)
-    public void testMethod() {
-        int n = 100000;
-        int euler = calcPrimesNumberOfEuler(n);
-    }
-
-    public static int testEuler(int n) {
-        return calcPrimesNumberOfEuler(n);
-    }
-
-    public static int testEratosthenes(int n) {
-        return calcPrimesNumberOfEratosthenes(n);
-    }
-
-    public static boolean[] testBool(int n) {
-        boolean[] a = new boolean[n];
-        for (int i = 0; i < n; i++) {
-            a[i] = true;
-        }
-        return a;
-    }
-
-    public static int[] testInt(int n) {
-        int[] a = new int[n];
-        for (int i = 0; i < n; i++) {
-            a[i] = 1;
-        }
-        return a;
+        new Runner(opt).run();
     }
 }
