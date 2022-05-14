@@ -5,11 +5,9 @@ Sieve of Eratosthenes
 Sieve of Euler
 
 Command to start Eratosthenes test:
-
 java -jar target/benchmarks.jar Eratisthenes -f 1 -i 5 -wi 5
 
 Command to start Euler test:
-
 java -jar target/benchmarks.jar Euler -f 1 -i 5 -wi 5
 
 
